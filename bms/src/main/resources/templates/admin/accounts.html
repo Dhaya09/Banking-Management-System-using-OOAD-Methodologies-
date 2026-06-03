@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>All Accounts — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('All Accounts','BMS / Admin / Accounts')}"></div>
+    <div class="content-area">
+
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+
+      <div class="section-header"><h2>💳 All Bank Accounts</h2></div>
+
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Account No.</th><th>Customer</th><th>Type</th><th>Balance</th><th>Status</th><th>Opened</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="acc : ${accounts}">
+                <td style="font-family:monospace;font-size:0.8rem;" th:text="${acc.accountNumber}">ACC</td>
+                <td th:text="${acc.customer.name}">Customer</td>
+                <td><span class="badge badge-info" th:text="${acc.accountType}">SAVINGS</span></td>
+                <td class="fw-600" th:text="'₹' + ${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}">₹0</td>
+                <td>
+                  <span class="badge"
+                    th:classappend="${acc.status.name() == 'ACTIVE'} ? 'badge-success' :
+                                   (${acc.status.name() == 'FROZEN'} ? 'badge-warning' :
+                                   (${acc.status.name() == 'CLOSED'} ? 'badge-danger' : 'badge-secondary'))"
+                    th:text="${acc.status}">ACTIVE</span>
+                </td>
+                <td th:text="${#temporals.format(acc.createdDate,'dd MMM yyyy')}">Date</td>
+                <td>
+                  <form th:if="${acc.status.name() == 'ACTIVE'}" th:action="@{/admin/accounts/{n}/freeze(n=${acc.accountNumber})}" method="post" style="display:inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="btn btn-warning btn-sm">❄️ Freeze</button>
+                  </form>
+                  <form th:if="${acc.status.name() == 'FROZEN'}" th:action="@{/admin/accounts/{n}/activate(n=${acc.accountNumber})}" method="post" style="display:inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="btn btn-success btn-sm">✅ Activate</button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

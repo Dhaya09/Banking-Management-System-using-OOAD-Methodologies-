@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Account Detail — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Account Detail','BMS / Customer / Accounts / Detail')}"></div>
+    <div class="content-area">
+
+      <div style="margin-bottom:16px;"><a th:href="@{/customer/accounts}" class="btn btn-outline btn-sm">← Back to Accounts</a></div>
+
+      <!-- Account Card -->
+      <div style="background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:16px;padding:28px 32px;color:#fff;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:0.75rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.1em;" th:text="${account.accountType}">SAVINGS</div>
+          <div style="font-size:0.9rem;font-family:monospace;opacity:0.85;margin:6px 0;" th:text="${account.accountNumber}">BMS001</div>
+          <div style="font-size:2.2rem;font-weight:700;font-family:'Space Grotesk',sans-serif;">₹<span th:text="${#numbers.formatDecimal(account.balance,1,'COMMA',2,'POINT')}">0.00</span></div>
+          <div style="margin-top:8px;font-size:0.8rem;opacity:0.7;" th:text="'Account Holder: ' + ${account.customer.name}">Holder</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="badge" style="background:rgba(255,255,255,0.2);color:#fff;font-size:0.85rem;" th:text="${account.status}">ACTIVE</span>
+          <div style="margin-top:12px;font-size:0.75rem;opacity:0.65;" th:text="'Opened: ' + ${#temporals.format(account.createdDate,'dd MMM yyyy')}"></div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+        <a th:href="@{/customer/transactions}" class="btn btn-success">⬇️ Deposit</a>
+        <a th:href="@{/customer/transactions}" class="btn btn-danger">⬆️ Withdraw</a>
+        <a th:href="@{/customer/transactions}" class="btn btn-primary">↔️ Transfer</a>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="card">
+        <div class="card-header">
+          <h4>📋 Transaction History</h4>
+          <span style="font-size:0.8rem;color:#64748B;" th:text="${transactions.size()} + ' transactions'"></span>
+        </div>
+        <div th:if="${transactions.empty}" class="empty-state" style="padding:40px;">
+          <div class="empty-icon">📋</div>
+          <p>No transactions yet</p>
+        </div>
+        <div class="table-wrapper" th:unless="${transactions.empty}">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Reference</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th class="text-right">Amount</th>
+                <th class="text-right">Balance After</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="txn : ${transactions}">
+                <td th:text="${#temporals.format(txn.transactionDate,'dd MMM yyyy HH:mm')}">Date</td>
+                <td style="font-family:monospace;font-size:0.78rem;" th:text="${txn.transactionReference}">REF</td>
+                <td>
+                  <span th:if="${txn.transactionType.name() == 'DEPOSIT'}"  style="color:#10B981;font-weight:600;">⬇️ Deposit</span>
+                  <span th:if="${txn.transactionType.name() == 'WITHDRAW'}" style="color:#EF4444;font-weight:600;">⬆️ Withdraw</span>
+                  <span th:if="${txn.transactionType.name() == 'TRANSFER'}" style="color:#3B82F6;font-weight:600;">↔️ Transfer</span>
+                </td>
+                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;" th:text="${txn.description}">-</td>
+                <td class="text-right fw-600"
+                    th:style="${txn.transactionType.name() == 'DEPOSIT'} ? 'color:#10B981;' : 'color:#EF4444;'"
+                    th:text="${txn.transactionType.name() == 'DEPOSIT' ? '+' : '-'} + '₹' + ${#numbers.formatDecimal(txn.amount,1,'COMMA',2,'POINT')}">₹0</td>
+                <td class="text-right" th:text="${txn.balanceAfter != null ? '₹' + #numbers.formatDecimal(txn.balanceAfter,1,'COMMA',2,'POINT') : '-'}">-</td>
+                <td>
+                  <span class="badge"
+                    th:classappend="${txn.status.name() == 'COMPLETED'} ? 'badge-success' : (${txn.status.name() == 'FAILED'} ? 'badge-danger' : 'badge-warning')"
+                    th:text="${txn.status}">STATUS</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

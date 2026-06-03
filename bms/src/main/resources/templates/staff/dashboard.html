@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Staff Dashboard — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Staff Dashboard','BMS / Staff / Dashboard')}"></div>
+    <div class="content-area">
+
+      <div style="background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:14px;padding:24px 28px;color:#fff;margin-bottom:24px;">
+        <h2 style="color:#fff;font-size:1.2rem;margin-bottom:4px;">Welcome, Bank Staff! 👋</h2>
+        <p style="opacity:0.75;font-size:0.85rem;">View and manage customer accounts and transactions.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">💳</div>
+          <div class="stat-info"><div class="stat-label">Total Accounts</div><div class="stat-value" th:text="${totalAccounts}">0</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">👥</div>
+          <div class="stat-info"><div class="stat-label">Total Customers</div><div class="stat-value" th:text="${totalCustomers}">0</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">🏛️</div>
+          <div class="stat-info"><div class="stat-label">Total Loans</div><div class="stat-value" th:text="${totalLoans}">0</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h4>💳 Recent Accounts</h4>
+          <a th:href="@{/staff/accounts}" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Account No.</th><th>Customer</th><th>Type</th><th>Balance</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr th:each="acc : ${recentAccounts}">
+                <td style="font-family:monospace;font-size:0.8rem;" th:text="${acc.accountNumber}">ACC</td>
+                <td th:text="${acc.customer.name}">Customer</td>
+                <td><span class="badge badge-info" th:text="${acc.accountType}">SAVINGS</span></td>
+                <td class="fw-600" th:text="'₹' + ${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}">₹0</td>
+                <td>
+                  <span class="badge"
+                    th:classappend="${acc.status.name() == 'ACTIVE'} ? 'badge-success' : 'badge-warning'"
+                    th:text="${acc.status}">ACTIVE</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

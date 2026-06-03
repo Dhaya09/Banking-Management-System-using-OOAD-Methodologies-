@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Manage Users — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Manage Users','BMS / Admin / Users')}"></div>
+    <div class="content-area">
+
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+      <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+      <div class="section-header">
+        <h2>👥 All Users</h2>
+        <a th:href="@{/admin/users/new}" class="btn btn-primary">+ Add User</a>
+      </div>
+
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Phone</th>
+                <th>Status</th><th>Locked</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="u : ${users}">
+                <td th:text="${u.userId}">1</td>
+                <td class="fw-600" th:text="${u.name}">Name</td>
+                <td style="font-size:0.78rem;" th:text="${u.email}">email</td>
+                <td>
+                  <span class="badge"
+                    th:classappend="${u.role.name() == 'ADMIN'} ? 'badge-danger' :
+                                   (${u.role.name() == 'MANAGER'} ? 'badge-warning' :
+                                   (${u.role.name() == 'BANK_STAFF'} ? 'badge-info' : 'badge-secondary'))"
+                    th:text="${u.role}">ROLE</span>
+                </td>
+                <td th:text="${u.phone ?: '-'}">-</td>
+                <td>
+                  <span class="badge" th:classappend="${u.active} ? 'badge-success' : 'badge-danger'"
+                        th:text="${u.active} ? 'Active' : 'Inactive'">Active</span>
+                </td>
+                <td>
+                  <span class="badge" th:classappend="${u.locked} ? 'badge-danger' : 'badge-success'"
+                        th:text="${u.locked} ? 'Locked' : 'OK'">OK</span>
+                </td>
+                <td>
+                  <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                    <form th:if="${u.active}" th:action="@{/admin/users/{id}/deactivate(id=${u.userId})}" method="post" style="display:inline;">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                      <button class="btn btn-warning btn-sm" onclick="return confirm('Deactivate this user?')">Deactivate</button>
+                    </form>
+                    <form th:unless="${u.active}" th:action="@{/admin/users/{id}/activate(id=${u.userId})}" method="post" style="display:inline;">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                      <button class="btn btn-success btn-sm">Activate</button>
+                    </form>
+                    <form th:if="${u.locked}" th:action="@{/admin/users/{id}/unlock(id=${u.userId})}" method="post" style="display:inline;">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                      <button class="btn btn-secondary btn-sm">Unlock</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

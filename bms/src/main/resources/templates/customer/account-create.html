@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Open Account — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Open New Account','BMS / Customer / Accounts / New')}"></div>
+    <div class="content-area">
+      <div style="margin-bottom:16px;"><a th:href="@{/customer/accounts}" class="btn btn-outline btn-sm">← Back</a></div>
+      <div class="card" style="max-width:520px;">
+        <div class="card-header"><h4>💳 Open a New Account</h4></div>
+        <div class="card-body">
+          <div th:if="${error}" class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+          <form th:action="@{/customer/accounts/new}" th:object="${accountCreationDto}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="form-group">
+              <label class="form-label">Account Type *</label>
+              <select th:field="*{accountType}" class="form-control" required>
+                <option value="">-- Select Account Type --</option>
+                <option th:each="type : ${accountTypes}" th:value="${type}" th:text="${type}"></option>
+              </select>
+              <div class="field-error" th:if="${#fields.hasErrors('accountType')}" th:errors="*{accountType}"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Initial Deposit (₹) *</label>
+              <input type="number" th:field="*{initialDeposit}" class="form-control" min="500" step="0.01" placeholder="Minimum ₹500"/>
+              <div class="form-hint">Minimum initial deposit: ₹500</div>
+              <div class="field-error" th:if="${#fields.hasErrors('initialDeposit')}" th:errors="*{initialDeposit}"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description (Optional)</label>
+              <input type="text" th:field="*{description}" class="form-control" placeholder="e.g. Primary savings account"/>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full btn-lg">✅ Open Account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

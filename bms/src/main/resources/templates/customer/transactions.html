@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Transactions — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Transactions','BMS / Customer / Transactions')}"></div>
+    <div class="content-area">
+
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+      <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+      <div class="section-header">
+        <h2>💸 Transaction Center</h2>
+      </div>
+
+      <!-- Tab Nav -->
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('deposit',this)">⬇️ Deposit</button>
+        <button class="tab-btn"        onclick="switchTab('withdraw',this)">⬆️ Withdraw</button>
+        <button class="tab-btn"        onclick="switchTab('transfer',this)">↔️ Transfer</button>
+      </div>
+
+      <!-- Deposit -->
+      <div id="tab-deposit" class="tab-panel active">
+        <div class="card" style="max-width:520px;">
+          <div class="card-header"><h4>⬇️ Deposit Money</h4></div>
+          <div class="card-body">
+            <form th:action="@{/customer/transactions/deposit}" th:object="${transactionDto}" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <div class="form-group">
+                <label class="form-label">Select Account *</label>
+                <select name="accountNumber" class="form-control" required>
+                  <option value="">-- Select Account --</option>
+                  <option th:each="acc : ${accounts}"
+                          th:value="${acc.accountNumber}"
+                          th:text="${acc.accountNumber} + ' (' + ${acc.accountType} + ') — ₹' + ${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}"
+                          th:disabled="${acc.status.name() != 'ACTIVE'}"></option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Amount (₹) *</label>
+                <input type="number" name="amount" class="form-control" min="1" step="0.01" placeholder="Enter amount" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" class="form-control" placeholder="Optional description"/>
+              </div>
+              <button type="submit" class="btn btn-success btn-full">✅ Deposit Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Withdraw -->
+      <div id="tab-withdraw" class="tab-panel">
+        <div class="card" style="max-width:520px;">
+          <div class="card-header"><h4>⬆️ Withdraw Money</h4></div>
+          <div class="card-body">
+            <form th:action="@{/customer/transactions/withdraw}" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <div class="form-group">
+                <label class="form-label">Select Account *</label>
+                <select name="accountNumber" class="form-control" required>
+                  <option value="">-- Select Account --</option>
+                  <option th:each="acc : ${accounts}"
+                          th:value="${acc.accountNumber}"
+                          th:text="${acc.accountNumber} + ' (' + ${acc.accountType} + ') — ₹' + ${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}"
+                          th:disabled="${acc.status.name() != 'ACTIVE'}"></option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Amount (₹) *</label>
+                <input type="number" name="amount" class="form-control" min="1" step="0.01" placeholder="Enter amount" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" class="form-control" placeholder="Optional description"/>
+              </div>
+              <button type="submit" class="btn btn-danger btn-full">🏧 Withdraw Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transfer -->
+      <div id="tab-transfer" class="tab-panel">
+        <div class="card" style="max-width:520px;">
+          <div class="card-header"><h4>↔️ Transfer Funds</h4></div>
+          <div class="card-body">
+            <div class="alert alert-info">🔒 Transfers are atomic — both debit and credit happen together.</div>
+            <form th:action="@{/customer/transactions/transfer}" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <div class="form-group">
+                <label class="form-label">From Account *</label>
+                <select name="accountNumber" class="form-control" required>
+                  <option value="">-- Select Source Account --</option>
+                  <option th:each="acc : ${accounts}"
+                          th:value="${acc.accountNumber}"
+                          th:text="${acc.accountNumber} + ' (' + ${acc.accountType} + ') — ₹' + ${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}"
+                          th:disabled="${acc.status.name() != 'ACTIVE'}"></option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">To Account Number *</label>
+                <input type="text" name="targetAccountNumber" class="form-control" placeholder="e.g. BMS260101002" required/>
+                <div class="form-hint">Enter the beneficiary's account number</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Amount (₹) *</label>
+                <input type="number" name="amount" class="form-control" min="1" step="0.01" placeholder="Enter amount" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" class="form-control" placeholder="Payment for..."/>
+              </div>
+              <button type="submit" class="btn btn-primary btn-full">↔️ Transfer Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+// auto-open correct tab based on flash
+const urlP = new URLSearchParams(window.location.search);
+</script>
+</body>
+</html>

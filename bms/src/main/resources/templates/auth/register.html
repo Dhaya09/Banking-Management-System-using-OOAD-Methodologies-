@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Register — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<style>
+  body { background: linear-gradient(135deg, #1E3A8A 0%, #1e2f6a 100%); min-height: 100vh; display: grid; place-items: center; padding: 30px 20px; }
+  .reg-wrapper { width: 100%; max-width: 560px; }
+  .reg-card { background: #fff; border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+  .reg-header { background: linear-gradient(135deg, #1E3A8A, #2563EB); padding: 28px 36px; display: flex; align-items: center; gap: 14px; }
+  .reg-header h1 { color: #fff; font-size: 1.3rem; }
+  .reg-header p { color: rgba(255,255,255,0.65); font-size: 0.8rem; }
+  .reg-body { padding: 28px 36px; }
+  .reg-footer { background: #F8FAFF; padding: 14px 36px; text-align: center; border-top: 1px solid #E2E8F0; }
+  .reg-footer p { font-size: 0.82rem; color: #64748B; }
+</style>
+</head>
+<body>
+<div class="reg-wrapper">
+  <div class="reg-card">
+    <div class="reg-header">
+      <div style="font-size:2rem;">🏦</div>
+      <div>
+        <h1>Create Account</h1>
+        <p>Open your BMS banking account</p>
+      </div>
+    </div>
+    <div class="reg-body">
+
+      <div th:if="${error}" class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+      <form th:action="@{/register}" th:object="${registrationDto}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" th:field="*{name}" class="form-control" placeholder="Arjun Patel"/>
+            <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address *</label>
+            <input type="email" th:field="*{email}" class="form-control" placeholder="arjun@email.com"/>
+            <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Password *</label>
+            <input type="password" th:field="*{password}" class="form-control" placeholder="Min 6 characters"/>
+            <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number *</label>
+            <input type="text" th:field="*{phone}" class="form-control" placeholder="9876543210"/>
+            <div class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" th:field="*{dateOfBirth}" class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nationality</label>
+            <input type="text" th:field="*{nationality}" class="form-control" placeholder="Indian"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input type="text" th:field="*{address}" class="form-control" placeholder="123 MG Road, Chennai"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:8px;">
+          ✅ Create My Account
+        </button>
+      </form>
+    </div>
+    <div class="reg-footer">
+      <p>Already have an account? <a th:href="@{/login}">Sign in here</a></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

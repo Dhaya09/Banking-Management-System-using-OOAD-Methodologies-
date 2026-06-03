@@ -1,0 +1,49 @@
+# ─── Maven Build Output ───────────────────────────────────────────────────────
+target/
+*.jar
+*.war
+*.ear
+
+# ─── Maven Wrapper (keep the jar so others can build without installing Maven) ─
+!.mvn/wrapper/maven-wrapper.jar
+
+# ─── Spring Boot / Runtime ────────────────────────────────────────────────────
+*.log
+logs/
+spring.log
+
+# ─── H2 Database (if ever switched to file-based persistence) ─────────────────
+*.db
+*.mv.db
+*.trace.db
+
+# ─── IDE — IntelliJ IDEA ──────────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ─── IDE — Eclipse ────────────────────────────────────────────────────────────
+.classpath
+.project
+.settings/
+bin/
+
+# ─── IDE — VS Code ────────────────────────────────────────────────────────────
+.vscode/
+
+# ─── Environment / Secrets ────────────────────────────────────────────────────
+# If credentials are ever moved out of DataInitializer into separate files
+.env
+application-prod.properties
+application-local.properties
+application-secret.properties
+
+# ─── OS Generated ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Stray compiled class files outside target/ ───────────────────────────────
+*.class

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>View Accounts — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('View Accounts','BMS / Manager / Accounts')}"></div>
+    <div class="content-area">
+      <div class="section-header"><h2>💳 All Accounts</h2></div>
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Account No.</th><th>Customer</th><th>Type</th><th>Balance</th><th>Status</th><th>Opened</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="acc : ${accounts}">
+                <td style="font-family:monospace;font-size:0.8rem;" th:text="${acc.accountNumber}">ACC</td>
+                <td th:text="${acc.customer.name}">Customer</td>
+                <td><span class="badge badge-info" th:text="${acc.accountType}">SAVINGS</span></td>
+                <td class="fw-600" th:text="'₹' + ${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}">₹0</td>
+                <td>
+                  <span class="badge"
+                    th:classappend="${acc.status.name() == 'ACTIVE'} ? 'badge-success' :
+                                   (${acc.status.name() == 'FROZEN'} ? 'badge-warning' : 'badge-danger')"
+                    th:text="${acc.status}">ACTIVE</span>
+                </td>
+                <td th:text="${#temporals.format(acc.createdDate,'dd MMM yyyy')}">Date</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

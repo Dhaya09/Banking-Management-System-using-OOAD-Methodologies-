@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Accounts — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('My Accounts','BMS / Customer / Accounts')}"></div>
+    <div class="content-area">
+
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+      <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+      <div class="section-header">
+        <h2>💳 My Accounts</h2>
+        <a th:href="@{/customer/accounts/new}" class="btn btn-primary">+ Open New Account</a>
+      </div>
+
+      <div th:if="${accounts.empty}" class="card">
+        <div class="empty-state" style="padding:60px;">
+          <div class="empty-icon">💳</div>
+          <h3 style="margin-bottom:8px;">No Accounts Yet</h3>
+          <p style="margin-bottom:16px;">Open your first bank account to get started.</p>
+          <a th:href="@{/customer/accounts/new}" class="btn btn-primary">Open Account</a>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;" th:unless="${accounts.empty}">
+        <div th:each="acc : ${accounts}">
+          <a th:href="@{/customer/accounts/{n}(n=${acc.accountNumber})}" style="text-decoration:none;">
+            <div style="background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:14px;padding:24px;color:#fff;cursor:pointer;transition:transform 0.2s;position:relative;overflow:hidden;"
+                 onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+                <div>
+                  <div style="font-size:0.72rem;opacity:0.7;letter-spacing:0.1em;text-transform:uppercase;" th:text="${acc.accountType}">SAVINGS</div>
+                  <div style="font-size:1.1rem;font-weight:700;margin-top:4px;">🏦 BMS Bank</div>
+                </div>
+                <span class="badge" style="background:rgba(255,255,255,0.2);color:#fff;"
+                      th:text="${acc.status}">ACTIVE</span>
+              </div>
+              <div style="font-family:monospace;font-size:0.9rem;letter-spacing:0.15em;opacity:0.8;margin-bottom:16px;" th:text="${acc.accountNumber}">BMS001</div>
+              <div style="font-size:0.72rem;opacity:0.65;">Available Balance</div>
+              <div style="font-size:1.8rem;font-weight:700;font-family:'Space Grotesk',sans-serif;">₹<span th:text="${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}">0.00</span></div>
+              <div style="margin-top:12px;font-size:0.72rem;opacity:0.6;" th:text="'Opened: ' + ${#temporals.format(acc.createdDate,'dd MMM yyyy')}">Opened</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

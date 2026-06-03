@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Customer Dashboard — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Customer Dashboard','BMS / Customer / Dashboard')}"></div>
+    <div class="content-area">
+
+      <!-- Flash messages -->
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+      <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+      <!-- Welcome Banner -->
+      <div style="background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:14px;padding:24px 28px;color:#fff;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h2 style="color:#fff;font-size:1.3rem;margin-bottom:4px;">Welcome back, <span th:text="${customer.name}">Customer</span>! 👋</h2>
+          <p style="opacity:0.75;font-size:0.85rem;">Customer Code: <span th:text="${customer.customerCode}"></span></p>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem;opacity:0.7;">Total Balance</div>
+          <div style="font-size:2rem;font-weight:700;">₹<span th:text="${#numbers.formatDecimal(totalBalance,1,'COMMA',2,'POINT')}">0.00</span></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">💳</div>
+          <div class="stat-info">
+            <div class="stat-label">My Accounts</div>
+            <div class="stat-value" th:text="${accounts.size()}">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">💰</div>
+          <div class="stat-info">
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value">₹<span th:text="${#numbers.formatDecimal(totalBalance,1,'COMMA',0,'POINT')}">0</span></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">🏛️</div>
+          <div class="stat-info">
+            <div class="stat-label">Active Loans</div>
+            <div class="stat-value" th:text="${loans.size()}">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+
+        <!-- Accounts -->
+        <div class="card">
+          <div class="card-header">
+            <h4>💳 My Accounts</h4>
+            <a th:href="@{/customer/accounts/new}" class="btn btn-primary btn-sm">+ New Account</a>
+          </div>
+          <div class="card-body" style="padding:16px;">
+            <div th:if="${accounts.empty}" class="empty-state" style="padding:30px 0;">
+              <div class="empty-icon">💳</div>
+              <p>No accounts yet. <a th:href="@{/customer/accounts/new}">Create one</a></p>
+            </div>
+            <div th:each="acc : ${accounts}">
+              <a th:href="@{/customer/accounts/{n}(n=${acc.accountNumber})}" style="text-decoration:none;">
+                <div class="account-card" style="margin-bottom:12px;">
+                  <div class="acc-type" th:text="${acc.accountType}">SAVINGS</div>
+                  <div class="acc-number" th:text="${acc.accountNumber}">BMS001</div>
+                  <div class="acc-balance">₹<span th:text="${#numbers.formatDecimal(acc.balance,1,'COMMA',2,'POINT')}">0.00</span></div>
+                  <div class="acc-status">
+                    <span class="badge" th:classappend="${acc.status.name() == 'ACTIVE'} ? 'badge-success' : 'badge-warning'" th:text="${acc.status}">ACTIVE</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions + Loans -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div class="card">
+            <div class="card-header"><h4>⚡ Quick Actions</h4></div>
+            <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <a th:href="@{/customer/transactions}" class="btn btn-secondary btn-full">💸 Deposit</a>
+              <a th:href="@{/customer/transactions}" class="btn btn-outline btn-full">🏧 Withdraw</a>
+              <a th:href="@{/customer/transactions}" class="btn btn-outline btn-full">↔️ Transfer</a>
+              <a th:href="@{/customer/loans/apply}" class="btn btn-success btn-full">🏛️ Apply Loan</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h4>🏛️ Recent Loans</h4>
+              <a th:href="@{/customer/loans}" class="btn btn-outline btn-sm">View All</a>
+            </div>
+            <div class="card-body" style="padding:0;">
+              <div th:if="${loans.empty}" class="empty-state" style="padding:24px 0;">
+                <div class="empty-icon" style="font-size:2rem;">🏛️</div>
+                <p>No loan applications yet</p>
+              </div>
+              <div th:each="loan : ${loans}" style="padding:12px 18px;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <div style="font-weight:600;font-size:0.85rem;" th:text="${loan.loanType}">HOME</div>
+                  <div style="font-size:0.75rem;color:#64748B;" th:text="${loan.loanReference}">REF</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-weight:700;" th:text="'₹' + ${#numbers.formatDecimal(loan.loanAmount,1,'COMMA',0,'POINT')}">₹0</div>
+                  <span class="badge"
+                    th:classappend="${loan.status.name() == 'APPROVED' or loan.status.name() == 'DISBURSED'} ? 'badge-success' :
+                                   (${loan.status.name() == 'REJECTED'} ? 'badge-danger' : 'badge-warning')"
+                    th:text="${loan.status}">STATUS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

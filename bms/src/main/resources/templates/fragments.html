@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+
+<!-- ══ SIDEBAR FRAGMENT ═══════════════════════════════════════════════════ -->
+<aside th:fragment="sidebar" class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">🏦</div>
+    <div class="brand-text">
+      <h3>BMS Banking</h3>
+      <small>Management System</small>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <!-- CUSTOMER -->
+    <div sec:authorize="hasRole('CUSTOMER')">
+      <div class="nav-section-label">Customer Menu</div>
+      <a th:href="@{/customer/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a th:href="@{/customer/accounts}"  class="nav-item"><span class="nav-icon">💳</span> My Accounts</a>
+      <a th:href="@{/customer/transactions}" class="nav-item"><span class="nav-icon">💸</span> Transactions</a>
+      <a th:href="@{/customer/loans}"     class="nav-item"><span class="nav-icon">🏛️</span> My Loans</a>
+      <a th:href="@{/customer/profile}"   class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+    </div>
+
+    <!-- ADMIN -->
+    <div sec:authorize="hasRole('ADMIN')">
+      <div class="nav-section-label">Administration</div>
+      <a th:href="@{/admin/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a th:href="@{/admin/users}"     class="nav-item"><span class="nav-icon">👥</span> Manage Users</a>
+      <a th:href="@{/admin/accounts}"  class="nav-item"><span class="nav-icon">💳</span> All Accounts</a>
+      <a th:href="@{/admin/loans}"     class="nav-item"><span class="nav-icon">🏛️</span> All Loans</a>
+    </div>
+
+    <!-- MANAGER -->
+    <div sec:authorize="hasRole('MANAGER')">
+      <div class="nav-section-label">Manager</div>
+      <a th:href="@{/manager/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a th:href="@{/manager/loans}"     class="nav-item"><span class="nav-icon">🏛️</span> Loan Management</a>
+      <a th:href="@{/manager/accounts}"  class="nav-item"><span class="nav-icon">💳</span> View Accounts</a>
+    </div>
+
+    <!-- BANK STAFF -->
+    <div sec:authorize="hasRole('BANK_STAFF')">
+      <div class="nav-section-label">Bank Staff</div>
+      <a th:href="@{/staff/dashboard}"  class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a th:href="@{/staff/accounts}"   class="nav-item"><span class="nav-icon">💳</span> Accounts</a>
+      <a th:href="@{/staff/customers}"  class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    </div>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" sec:authentication="name"
+           th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">U</div>
+      <div class="user-info-text">
+        <div class="user-name" sec:authentication="name">User</div>
+        <div class="user-role" sec:authorize="hasRole('ADMIN')">Administrator</div>
+        <div class="user-role" sec:authorize="hasRole('MANAGER')">Branch Manager</div>
+        <div class="user-role" sec:authorize="hasRole('BANK_STAFF')">Bank Staff</div>
+        <div class="user-role" sec:authorize="hasRole('CUSTOMER')">Customer</div>
+      </div>
+    </div>
+    <form th:action="@{/logout}" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <button type="submit" class="btn btn-outline btn-sm btn-full" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.2);">
+        🚪 Sign Out
+      </button>
+    </form>
+  </div>
+</aside>
+
+<!-- ══ HEADER FRAGMENT ════════════════════════════════════════════════════ -->
+<header th:fragment="header(title, breadcrumb)" class="top-header">
+  <div>
+    <div class="page-title" th:text="${title}">Page Title</div>
+    <div class="page-breadcrumb" th:text="${breadcrumb}">BMS / Page</div>
+  </div>
+  <div class="header-actions">
+    <a th:href="@{/dashboard}" class="btn btn-outline btn-sm">🏠 Home</a>
+  </div>
+</header>
+
+</body>
+</html>

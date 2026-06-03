@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Loans — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('My Loans','BMS / Customer / Loans')}"></div>
+    <div class="content-area">
+
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+
+      <div class="section-header">
+        <h2>🏛️ My Loans</h2>
+        <a th:href="@{/customer/loans/apply}" class="btn btn-primary">+ Apply for Loan</a>
+      </div>
+
+      <div th:if="${loans.empty}" class="card">
+        <div class="empty-state" style="padding:60px;">
+          <div class="empty-icon">🏛️</div>
+          <h3 style="margin-bottom:8px;">No Loan Applications</h3>
+          <p style="margin-bottom:16px;">Apply for a loan to meet your financial needs.</p>
+          <a th:href="@{/customer/loans/apply}" class="btn btn-primary">Apply Now</a>
+        </div>
+      </div>
+
+      <div class="card" th:unless="${loans.empty}">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Interest Rate</th>
+                <th>Duration</th>
+                <th>EMI</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="loan : ${loans}">
+                <td style="font-family:monospace;font-size:0.78rem;" th:text="${loan.loanReference}">REF</td>
+                <td th:text="${loan.loanType}">HOME</td>
+                <td class="fw-600" th:text="'₹' + ${#numbers.formatDecimal(loan.loanAmount,1,'COMMA',2,'POINT')}">₹0</td>
+                <td th:text="${loan.interestRate} + '%'">8%</td>
+                <td th:text="${loan.durationMonths} + ' months'">12 months</td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(loan.calculateEMI(),1,'COMMA',2,'POINT')}">₹0</td>
+                <td th:text="${#temporals.format(loan.appliedDate,'dd MMM yyyy')}">Date</td>
+                <td>
+                  <span class="badge"
+                    th:classappend="${loan.status.name() == 'APPROVED' or loan.status.name() == 'DISBURSED'} ? 'badge-success' :
+                                   (${loan.status.name() == 'REJECTED'} ? 'badge-danger' :
+                                   (${loan.status.name() == 'UNDER_REVIEW'} ? 'badge-info' : 'badge-warning'))"
+                    th:text="${loan.status}">STATUS</span>
+                </td>
+                <td><a th:href="@{/customer/loans/{id}(id=${loan.loanId})}" class="btn btn-outline btn-sm">View</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

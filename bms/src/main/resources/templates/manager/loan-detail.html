@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Loan Review — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('Loan Review','BMS / Manager / Loans / Review')}"></div>
+    <div class="content-area">
+
+      <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+      <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+      <div style="margin-bottom:16px;"><a th:href="@{/manager/loans}" class="btn btn-outline btn-sm">← Back to Loans</a></div>
+
+      <!-- Status Header -->
+      <div style="border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;"
+           th:style="${loan.status.name() == 'APPROVED' or loan.status.name() == 'DISBURSED'} ? 'background:linear-gradient(135deg,#059669,#10B981);color:#fff;' :
+                     (${loan.status.name() == 'REJECTED'} ? 'background:linear-gradient(135deg,#DC2626,#EF4444);color:#fff;' :
+                     'background:linear-gradient(135deg,#1E3A8A,#2563EB);color:#fff;')">
+        <div>
+          <div style="font-size:0.75rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.1em;">Loan Application Review</div>
+          <div style="font-size:1.4rem;font-weight:700;margin-top:4px;" th:text="${loan.loanReference}">REF</div>
+          <div style="font-size:0.85rem;opacity:0.8;margin-top:2px;" th:text="${loan.customer.name} + ' — ' + ${loan.loanType} + ' Loan'">Customer</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem;opacity:0.7;">Loan Amount</div>
+          <div style="font-size:2.2rem;font-weight:700;font-family:'Space Grotesk',sans-serif;">₹<span th:text="${#numbers.formatDecimal(loan.loanAmount,1,'COMMA',0,'POINT')}">0</span></div>
+          <span style="background:rgba(255,255,255,0.25);padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:600;" th:text="${loan.status}">STATUS</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+
+        <!-- Loan Info -->
+        <div class="card">
+          <div class="card-header"><h4>📋 Loan Details</h4></div>
+          <div class="card-body">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;width:45%;">Reference</td>
+                <td style="padding:10px 0;font-weight:600;font-family:monospace;font-size:0.82rem;" th:text="${loan.loanReference}">REF</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Customer</td>
+                <td style="padding:10px 0;font-weight:600;" th:text="${loan.customer.name}">Name</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Customer Email</td>
+                <td style="padding:10px 0;font-size:0.82rem;" th:text="${loan.customer.email}">email</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Loan Type</td>
+                <td style="padding:10px 0;font-weight:600;" th:text="${loan.loanType}">HOME</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Principal Amount</td>
+                <td style="padding:10px 0;font-weight:700;color:#1E3A8A;" th:text="'₹' + ${#numbers.formatDecimal(loan.loanAmount,1,'COMMA',2,'POINT')}">₹0</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Interest Rate</td>
+                <td style="padding:10px 0;font-weight:600;" th:text="${loan.interestRate} + '% p.a.'">8%</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Duration</td>
+                <td style="padding:10px 0;font-weight:600;" th:text="${loan.durationMonths} + ' months'">60 months</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Monthly EMI</td>
+                <td style="padding:10px 0;font-weight:700;color:#059669;" th:text="'₹' + ${#numbers.formatDecimal(loan.calculateEMI(),1,'COMMA',2,'POINT')}">₹0</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Total Payable</td>
+                <td style="padding:10px 0;font-weight:600;" th:text="'₹' + ${#numbers.formatDecimal(loan.getTotalPayable(),1,'COMMA',2,'POINT')}">₹0</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Total Interest</td>
+                <td style="padding:10px 0;font-weight:600;color:#EF4444;" th:text="'₹' + ${#numbers.formatDecimal(loan.getTotalInterest(),1,'COMMA',2,'POINT')}">₹0</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;font-size:0.82rem;color:#64748B;">Purpose</td>
+                <td style="padding:10px 0;" th:text="${loan.purpose}">Purpose</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Actions Panel -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+
+          <!-- Remarks (if already reviewed) -->
+          <div class="card" th:if="${loan.remarks != null}">
+            <div class="card-header"><h4>💬 Review Remarks</h4></div>
+            <div class="card-body">
+              <div style="padding:12px;background:#F8FAFF;border-radius:8px;font-size:0.85rem;" th:text="${loan.remarks}">Remarks</div>
+              <div style="margin-top:10px;font-size:0.78rem;color:#64748B;" th:if="${loan.reviewedBy != null}">
+                Reviewed by: <strong th:text="${loan.reviewedBy.name}">Manager</strong>
+                on <span th:text="${#temporals.format(loan.reviewedDate,'dd MMM yyyy HH:mm')}">Date</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="card">
+            <div class="card-header"><h4>⚡ Actions</h4></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+
+              <!-- Mark Under Review -->
+              <div th:if="${loan.status.name() == 'SUBMITTED'}">
+                <form th:action="@{/manager/loans/{id}/review(id=${loan.loanId})}" method="post">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button type="submit" class="btn btn-secondary btn-full">🔍 Mark Under Review</button>
+                </form>
+              </div>
+
+              <!-- Approve / Reject -->
+              <div th:if="${loan.status.name() == 'SUBMITTED' or loan.status.name() == 'UNDER_REVIEW'}">
+
+                <form th:action="@{/manager/loans/{id}/approve(id=${loan.loanId})}" method="post" style="margin-bottom:10px;">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <div class="form-group" style="margin-bottom:8px;">
+                    <label class="form-label">Approval Remarks</label>
+                    <input type="text" name="remarks" class="form-control" placeholder="e.g. All documents verified, approved." required/>
+                  </div>
+                  <button type="submit" class="btn btn-success btn-full"
+                          onclick="return confirm('Are you sure you want to APPROVE this loan?')">
+                    ✅ Approve Loan
+                  </button>
+                </form>
+
+                <form th:action="@{/manager/loans/{id}/reject(id=${loan.loanId})}" method="post">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <div class="form-group" style="margin-bottom:8px;">
+                    <label class="form-label">Rejection Reason</label>
+                    <input type="text" name="remarks" class="form-control" placeholder="e.g. Insufficient income proof." required/>
+                  </div>
+                  <button type="submit" class="btn btn-danger btn-full"
+                          onclick="return confirm('Are you sure you want to REJECT this loan?')">
+                    ❌ Reject Loan
+                  </button>
+                </form>
+
+              </div>
+
+              <!-- Disburse -->
+              <div th:if="${loan.status.name() == 'APPROVED'}">
+                <form th:action="@{/manager/loans/{id}/disburse(id=${loan.loanId})}" method="post">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button type="submit" class="btn btn-primary btn-full"
+                          onclick="return confirm('Disburse this loan amount to customer?')">
+                    💰 Disburse Loan
+                  </button>
+                </form>
+              </div>
+
+              <!-- Final States -->
+              <div th:if="${loan.status.name() == 'REJECTED' or loan.status.name() == 'DISBURSED' or loan.status.name() == 'CLOSED'}">
+                <div class="alert alert-info">ℹ️ This loan is in final state: <strong th:text="${loan.status}">STATUS</strong></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="card">
+            <div class="card-header"><h4>📅 Timeline</h4></div>
+            <div class="card-body">
+              <div style="position:relative;padding-left:24px;">
+                <div style="border-left:2px solid #E2E8F0;position:absolute;left:7px;top:10px;bottom:10px;"></div>
+                <div style="margin-bottom:16px;position:relative;">
+                  <div style="width:14px;height:14px;border-radius:50%;background:#10B981;position:absolute;left:-20px;top:3px;"></div>
+                  <div style="font-weight:600;font-size:0.85rem;">Application Submitted</div>
+                  <div style="font-size:0.75rem;color:#64748B;" th:text="${#temporals.format(loan.appliedDate,'dd MMM yyyy HH:mm')}">Date</div>
+                </div>
+                <div style="margin-bottom:16px;position:relative;" th:if="${loan.reviewedDate != null}">
+                  <div style="width:14px;height:14px;border-radius:50%;position:absolute;left:-20px;top:3px;"
+                       th:style="${loan.status.name() == 'APPROVED' or loan.status.name() == 'DISBURSED'} ? 'background:#10B981;' : 'background:#EF4444;'"></div>
+                  <div style="font-weight:600;font-size:0.85rem;" th:text="${loan.status.name() == 'APPROVED' or loan.status.name() == 'DISBURSED'} ? 'Approved' : 'Rejected'">Reviewed</div>
+                  <div style="font-size:0.75rem;color:#64748B;" th:text="${#temporals.format(loan.reviewedDate,'dd MMM yyyy HH:mm')}">Date</div>
+                </div>
+                <div th:if="${loan.disbursedDate != null}" style="position:relative;">
+                  <div style="width:14px;height:14px;border-radius:50%;background:#3B82F6;position:absolute;left:-20px;top:3px;"></div>
+                  <div style="font-weight:600;font-size:0.85rem;">Disbursed</div>
+                  <div style="font-size:0.75rem;color:#64748B;" th:text="${#temporals.format(loan.disbursedDate,'dd MMM yyyy HH:mm')}">Date</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

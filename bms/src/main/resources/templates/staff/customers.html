@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Customers — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('All Customers','BMS / Staff / Customers')}"></div>
+    <div class="content-area">
+      <div class="section-header"><h2>👥 All Customers</h2></div>
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Customer Code</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Since</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="u : ${customers}">
+                <td th:text="${u.userId}">1</td>
+                <td style="font-family:monospace;font-size:0.8rem;">—</td>
+                <td class="fw-600" th:text="${u.name}">Name</td>
+                <td style="font-size:0.78rem;" th:text="${u.email}">email</td>
+                <td th:text="${u.phone ?: '-'}">-</td>
+                <td>
+                  <span class="badge" th:classappend="${u.active} ? 'badge-success' : 'badge-danger'"
+                        th:text="${u.active} ? 'Active' : 'Inactive'">Active</span>
+                </td>
+                <td th:text="${#temporals.format(u.createdAt,'dd MMM yyyy')}">Date</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

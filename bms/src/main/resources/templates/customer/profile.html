@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Profile — BMS Banking</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="app-wrapper">
+  <div th:replace="~{fragments :: sidebar}"></div>
+  <div class="main-content">
+    <div th:replace="~{fragments :: header('My Profile','BMS / Customer / Profile')}"></div>
+    <div class="content-area">
+      <div class="card" style="max-width:560px;">
+        <div class="card-header" style="background:linear-gradient(135deg,#1E3A8A,#2563EB);border-radius:0;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:50%;display:grid;place-items:center;font-size:1.5rem;color:#fff;font-weight:700;"
+                 th:text="${#strings.substring(user.name,0,1).toUpperCase()}">U</div>
+            <div>
+              <h4 style="color:#fff;font-size:1.1rem;" th:text="${user.name}">Name</h4>
+              <div style="color:rgba(255,255,255,0.7);font-size:0.8rem;" th:text="${user.email}">email</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;gap:14px;">
+            <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E2E8F0;">
+              <span style="color:#64748B;font-size:0.85rem;">Customer Code</span>
+              <span class="fw-600" th:text="${user.customerCode}">CUST001</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E2E8F0;">
+              <span style="color:#64748B;font-size:0.85rem;">Phone</span>
+              <span class="fw-600" th:text="${user.phone ?: 'Not provided'}">-</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E2E8F0;">
+              <span style="color:#64748B;font-size:0.85rem;">Date of Birth</span>
+              <span class="fw-600" th:text="${user.dateOfBirth ?: 'Not provided'}">-</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E2E8F0;">
+              <span style="color:#64748B;font-size:0.85rem;">Nationality</span>
+              <span class="fw-600" th:text="${user.nationality ?: 'Not provided'}">-</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E2E8F0;">
+              <span style="color:#64748B;font-size:0.85rem;">Address</span>
+              <span class="fw-600" th:text="${user.address ?: 'Not provided'}">-</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:#64748B;font-size:0.85rem;">Member Since</span>
+              <span class="fw-600" th:text="${#temporals.format(user.createdAt,'dd MMM yyyy')}">Date</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
