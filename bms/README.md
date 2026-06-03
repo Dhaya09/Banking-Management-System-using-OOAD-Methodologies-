@@ -779,14 +779,6 @@ Without an ownership check, any authenticated customer could access `/customer/a
 
 ---
 
-## Contributors
-
-| Name | Registration Number | Course |
-|---|---|---|
-| Dhayanidhi S | 23BIT0214 | BITE404E — Object Oriented Analysis and Design Lab, VIT University |
-
----
-
 ## License
 
 This project is licensed under the MIT License.
@@ -809,14 +801,3 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ```
 
----
-
-## Acknowledgements
-
-- **VIT University** — BITE404E Object Oriented Analysis and Design Lab
-- [Spring Boot](https://spring.io/projects/spring-boot) — application framework
-- [Spring Security](https://spring.io/projects/spring-security) — authentication and authorization
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa) — ORM and repository abstraction
-- [Thymeleaf](https://www.thymeleaf.org/) — server-side template engine
-- [H2 Database](https://www.h2database.com/) — in-memory database for development
-- **UML 2.5 Specification** — Grady Booch, James Rumbaugh, Ivar Jacobson (Three Amigos / RUP methodology)
